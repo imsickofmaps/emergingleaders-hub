@@ -8,20 +8,6 @@ from rest_framework.authtoken.models import Token
 
 from .models import Trainer
 
-USER_1_SIMPLE = {
-    "name": "Test User 1 Simple",
-    "msisdn": "+27820010001"
-}
-USER_2_DETAILED = {
-    "name": "Test User 2 Detailed",
-    "msisdn": "+27820020002",
-    "email": "user2@operations.com",
-    "extras": {
-        "id": "1234561111222",
-        "coffee": "black"
-    }
-}
-
 
 class APITestCase(TestCase):
 
@@ -42,18 +28,12 @@ class AuthenticatedAPITestCase(APITestCase):
         self.token = token.key
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
 
-    def _make_trainer(self, post_data=USER_1_SIMPLE):
-        response = self.client.post('/operations/trainer/',
-                                    json.dumps(post_data),
-                                    content_type='application/json')
-        return response
 
-
-class TestExampleAppHStore(AuthenticatedAPITestCase):
+class TestOperationsApi(AuthenticatedAPITestCase):
 
     def test_login(self):
         request = self.client.post(
-            '/operations/api-token-auth/',
+            '/api/v1/token-auth/',
             {"username": "testuser", "password": "testpass"})
         token = request.data.get('token', None)
         self.assertIsNotNone(
@@ -62,8 +42,25 @@ class TestExampleAppHStore(AuthenticatedAPITestCase):
                          "Status code on /auth/login was %s (should be 200)."
                          % request.status_code)
 
-    def test_create_trainer_simple(self):
-        response = self._make_trainer()
+    def test_api_get_trainer(self):
+        trainer_data = {
+            "name": "Test User 1 Simple",
+            "msisdn": "+27820010001"
+        }
+        trainer = Trainer.objects.create(**trainer_data)
+        response = self.client.get(
+            '/api/v1/operations/trainers/%s/' % trainer.id,
+            content_type='application/json')
+        self.assertEqual(response.data["name"], "Test User 1 Simple")
+
+    def test_api_create_trainer_simple(self):
+        post_data = {
+            "name": "Test User 1 Simple",
+            "msisdn": "+27820010001"
+        }
+        response = self.client.post('/api/v1/operations/trainers/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         d = Trainer.objects.last()
         self.assertEqual(d.name, "Test User 1 Simple")
@@ -71,8 +68,19 @@ class TestExampleAppHStore(AuthenticatedAPITestCase):
         self.assertEqual(d.email, None)
         self.assertEqual(d.extras, None)
 
-    def test_create_trainer_detailed(self):
-        response = self._make_trainer(post_data=USER_2_DETAILED)
+    def test_api_create_trainer_detailed(self):
+        post_data = {
+            "name": "Test User 2 Detailed",
+            "msisdn": "+27820020002",
+            "email": "user2@operations.com",
+            "extras": {
+                "id": "1234561111222",
+                "coffee": "black"
+            }
+        }
+        response = self.client.post('/api/v1/operations/trainers/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         d = Trainer.objects.last()
         self.assertEqual(d.name, "Test User 2 Detailed")
