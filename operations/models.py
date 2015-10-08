@@ -18,4 +18,4 @@ class Trainer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):  # __unicode__ on Python 2
-        return "Trainer: %s; ID: %s" % (self.name, str(self.id))
+        return "%s" % self.name
