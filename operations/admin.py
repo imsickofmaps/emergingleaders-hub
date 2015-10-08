@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import DummyModel
+from .models import Trainer
 
-admin.site.register(DummyModel)
+admin.site.register(Trainer)
