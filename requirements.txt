@@ -1,6 +1,5 @@
 Django
 djangorestframework
-djangorestframework-hstore
 dj-database-url
 psycopg2
 raven
