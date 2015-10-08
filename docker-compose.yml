@@ -1,0 +1,56 @@
+nginxproxy:
+  restart: always
+  image: jwilder/nginx-proxy
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+  ports:
+    - "80:80"
+
+elhub:
+  restart: always
+  build: ./
+  expose:
+    - "8001"
+  links:
+    - elhubdb:elhubdb
+  env_file: emergingleaders_hub.env
+  command: /usr/local/bin/gunicorn emergingleaders_hub.wsgi:application -w 2 -b :8001
+
+elhubdb:
+  restart: always
+  image: aidanlister/postgres-hstore:latest
+  volumes_from:
+    - elhubdbdata
+  ports:
+    - "5433:5432"
+
+elhubdbdata:
+  restart: no
+  image: aidanlister/postgres-hstore:latest
+  volumes:
+    - /var/lib/postgresql
+  command: true
+
+elhubcelery:
+  restart: always
+  build: ./
+  links:
+    - elhubdb:elhubdb
+    - elhubredis:elhubredis
+  env_file: emergingleaders_hub.env
+  command: /usr/local/bin/python manage.py celery worker --loglevel=info
+
+elhubcelerybeat:
+  restart: always
+  build: ./
+  links:
+    - elhubdb:elhubdb
+    - elhubredis:elhubredis
+  env_file: emergingleaders_hub.env
+  command: /usr/local/bin/python manage.py celery beat --loglevel=info
+
+elhubredis:
+  restart: always
+  image: redis:latest
+  ports:
+    - "6379:6379"
