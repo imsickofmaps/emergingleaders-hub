@@ -9,4 +9,4 @@ install:
   - "pip install -r requirements-dev.txt --use-wheel"
 script:
   - flake8 .
-  - py.test --ds=gopherairtime.testsettings */tests.py
+  - py.test --ds=emergingleaders_hub.testsettings */tests.py
