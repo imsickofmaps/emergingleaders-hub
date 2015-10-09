@@ -6,8 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
-
-from .models import DummyModel
+from .models import Trainer
 
 
 class APITestCase(TestCase):
@@ -30,11 +29,11 @@ class AuthenticatedAPITestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
 
 
-class TestExampleAppHStore(AuthenticatedAPITestCase):
+class TestOperationsApi(AuthenticatedAPITestCase):
 
     def test_login(self):
         request = self.client.post(
-            '/operations/api-token-auth/',
+            '/api/v1/token-auth/',
             {"username": "testuser", "password": "testpass"})
         token = request.data.get('token', None)
         self.assertIsNotNone(
@@ -43,17 +42,48 @@ class TestExampleAppHStore(AuthenticatedAPITestCase):
                          "Status code on /auth/login was %s (should be 200)."
                          % request.status_code)
 
-    def test_create_dummy_model_data(self):
-        post_data = {
-            "product_code": "test_code",
-            "data": {'a': 'a', 'b': 2}
+    def test_api_get_trainer(self):
+        trainer_data = {
+            "name": "Test User 1 Simple",
+            "msisdn": "+27820010001"
         }
-        response = self.client.post('/operations/dummy/',
+        trainer = Trainer.objects.create(**trainer_data)
+        response = self.client.get(
+            '/api/v1/trainers/%s/' % trainer.id,
+            content_type='application/json')
+        self.assertEqual(response.data["name"], "Test User 1 Simple")
+
+    def test_api_create_trainer_simple(self):
+        post_data = {
+            "name": "Test User 1 Simple",
+            "msisdn": "+27820010001"
+        }
+        response = self.client.post('/api/v1/trainers/',
                                     json.dumps(post_data),
                                     content_type='application/json')
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        d = Trainer.objects.last()
+        self.assertEqual(d.name, "Test User 1 Simple")
+        self.assertEqual(d.msisdn, "+27820010001")
+        self.assertEqual(d.email, None)
+        self.assertEqual(d.extras, None)
 
-        d = DummyModel.objects.last()
-        self.assertEqual(d.product_code, 'test_code')
-        self.assertEqual(d.data, {'a': 'a', 'b': '2'})
+    def test_api_create_trainer_detailed(self):
+        post_data = {
+            "name": "Test User 2 Detailed",
+            "msisdn": "+27820020002",
+            "email": "user2@operations.com",
+            "extras": {
+                "id": "1234561111222",
+                "coffee": "black"
+            }
+        }
+        response = self.client.post('/api/v1/trainers/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        d = Trainer.objects.last()
+        self.assertEqual(d.name, "Test User 2 Detailed")
+        self.assertEqual(d.msisdn, "+27820020002")
+        self.assertEqual(d.email, "user2@operations.com")
+        self.assertEqual(d.extras, {"id": "1234561111222", "coffee": "black"})
