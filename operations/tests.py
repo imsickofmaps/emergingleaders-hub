@@ -49,7 +49,7 @@ class TestOperationsApi(AuthenticatedAPITestCase):
         }
         trainer = Trainer.objects.create(**trainer_data)
         response = self.client.get(
-            '/api/v1/operations/trainers/%s/' % trainer.id,
+            '/api/v1/trainers/%s/' % trainer.id,
             content_type='application/json')
         self.assertEqual(response.data["name"], "Test User 1 Simple")
 
@@ -58,7 +58,7 @@ class TestOperationsApi(AuthenticatedAPITestCase):
             "name": "Test User 1 Simple",
             "msisdn": "+27820010001"
         }
-        response = self.client.post('/api/v1/operations/trainers/',
+        response = self.client.post('/api/v1/trainers/',
                                     json.dumps(post_data),
                                     content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -78,7 +78,7 @@ class TestOperationsApi(AuthenticatedAPITestCase):
                 "coffee": "black"
             }
         }
-        response = self.client.post('/api/v1/operations/trainers/',
+        response = self.client.post('/api/v1/trainers/',
                                     json.dumps(post_data),
                                     content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
