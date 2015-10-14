@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group
-from .models import Trainer
+from .models import Trainer, Location
 from rest_framework import serializers
 
 
@@ -19,3 +19,9 @@ class TrainerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Trainer
         fields = ('url', 'id', 'name', 'msisdn', 'email', 'extras')
+
+
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Location
+        fields = ('url', 'id', 'point', 'venue_name', 'address', 'extras')

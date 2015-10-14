@@ -1,12 +1,28 @@
 import json
 
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
-from .models import Trainer
+from .models import Trainer, Location
+
+
+def make_point_dict(x, y):
+    print('1111111111111111111111')
+    print(x, y)
+    point_data = {
+        "point": {
+            "type": "Point",
+            "coordinates": [
+                    x,
+                    y
+            ]
+        }
+    }
+    return point_data
 
 
 class APITestCase(TestCase):
@@ -87,3 +103,49 @@ class TestOperationsApi(AuthenticatedAPITestCase):
         self.assertEqual(d.msisdn, "+27820020002")
         self.assertEqual(d.email, "user2@operations.com")
         self.assertEqual(d.extras, {"id": "1234561111222", "coffee": "black"})
+
+    def test_api_get_location(self):
+        location_data = {
+            "point": Point(18.0000000, -33.0000000)
+        }
+        location = Location.objects.create(**location_data)
+        response = self.client.get(
+            '/api/v1/locations/%s/' % location.id,
+            content_type='application/json')
+        self.assertEqual(response.data["point"],
+                         str(Point(18.0000000, -33.0000000, srid=4326)))
+
+    # def test_api_create_location_simple(self):
+    #     post_data = {
+    #         "name": "Test User 1 Simple",
+    #         "msisdn": "+27820010001"
+    #     }
+    #     response = self.client.post('/api/v1/trainers/',
+    #                                 json.dumps(post_data),
+    #                                 content_type='application/json')
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     d = Trainer.objects.last()
+    #     self.assertEqual(d.name, "Test User 1 Simple")
+    #     self.assertEqual(d.msisdn, "+27820010001")
+    #     self.assertEqual(d.email, None)
+    #     self.assertEqual(d.extras, None)
+
+    # def test_api_create_location_detailed(self):
+        # post_data = {
+        #     "name": "Test User 2 Detailed",
+        #     "msisdn": "+27820020002",
+        #     "email": "user2@operations.com",
+        #     "extras": {
+        #         "id": "1234561111222",
+        #         "coffee": "black"
+        #     }
+        # }
+        # response = self.client.post('/api/v1/trainers/',
+        #                             json.dumps(post_data),
+        #                             content_type='application/json')
+        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # d = Trainer.objects.last()
+        # self.assertEqual(d.name, "Test User 2 Detailed")
+        # self.assertEqual(d.msisdn, "+27820020002")
+        # self.assertEqual(d.email, "user2@operations.com")
+        # self.assertEqual(d.extras, {"id": "1234561111222", "coffee": "black"})

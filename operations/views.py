@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User, Group
-from .models import Trainer
+from .models import Trainer, Location
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (UserSerializer, GroupSerializer,
-                          TrainerSerializer)
+from .serializers import (UserSerializer, GroupSerializer, TrainerSerializer,
+                          LocationSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -32,3 +32,13 @@ class TrainerViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Trainer.objects.all()
     serializer_class = TrainerSerializer
+
+
+class LocationViewSet(viewsets.ModelViewSet):
+
+    """
+    API endpoint that allows Locations to be viewed or edited.
+    """
+    permission_classes = (IsAuthenticated,)
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
