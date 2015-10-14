@@ -1,8 +1,7 @@
 import uuid
 
 from django.contrib.postgres.fields import HStoreField
-from django.db import models
-from django.contrib.gis.db import models as gis_models
+from django.contrib.gis.db import models
 
 
 class Trainer(models.Model):
@@ -22,7 +21,7 @@ class Trainer(models.Model):
         return "%s" % self.name
 
 
-class Location(gis_models.Model):
+class Location(models.Model):
 
     """
     Training session point of location
@@ -30,7 +29,7 @@ class Location(gis_models.Model):
         GeoDjango point for x/y co-ordinates
     """
     point = models.PointField()
-    name = models.CharField(max_length=100, null=True, blank=True)
+    venue_name = models.CharField(max_length=200, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     extras = HStoreField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

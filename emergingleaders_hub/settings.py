@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.postgres',
+    'django.contrib.gis',
     # 3rd party
     'raven.contrib.django.raven_compat',
     'rest_framework',
@@ -74,7 +74,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get(
             'ELHUB_DATABASE',
-            'postgres://postgres:@localhost/emergingleaders_hub')),
+            'postgis://postgres:@localhost/emergingleaders_hub')),
 }
 
 
