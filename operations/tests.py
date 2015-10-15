@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
@@ -7,7 +8,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
-from .models import Trainer, Location
+from .models import Trainer, Participant, Location
 
 
 class APITestCase(TestCase):
@@ -126,3 +127,65 @@ class TestOperationsApi(AuthenticatedAPITestCase):
         # Check
         self.assertEqual(response.data["point"],
                          str(Point(18.0000000, -33.0000000, srid=4326)))
+
+    # Participant Api Testing
+    def test_api_get_participant(self):
+        # Setup
+        participant_data = {
+            "msisdn": "+27820010001"
+        }
+        participant = Participant.objects.create(**participant_data)
+
+        # Execute
+        response = self.client.get(
+            '/api/v1/participants/%s/' % participant.id,
+            content_type='application/json')
+
+        # Check
+        print(response.data)
+        self.assertEqual(response.data["msisdn"], "+27820010001")
+
+    def test_api_create_participant_simple(self):
+        # Setup
+        post_data = {
+            "msisdn": "+27820010001"
+        }
+
+        # Execute
+        response = self.client.post('/api/v1/participants/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
+
+        # Check
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        d = Participant.objects.last()
+        self.assertEqual(d.msisdn, "+27820010001")
+        self.assertEqual(d.lang, None)
+
+    def test_api_create_participant_detailed(self):
+        # Setup
+        post_data = {
+            "msisdn": "+27820020002",
+            "lang": "en",
+            "full_name": "Piet Poggenpoel",
+            "gender": "male",
+            "id_type": "sa_id",
+            "id_no": "8001015001001",
+            "dob": "1980-01-01"
+        }
+
+        # Execute
+        response = self.client.post('/api/v1/participants/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
+
+        # Check
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        d = Participant.objects.last()
+        self.assertEqual(d.msisdn, "+27820020002")
+        self.assertEqual(d.lang, "en")
+        self.assertEqual(d.full_name, "Piet Poggenpoel")
+        self.assertEqual(d.gender, "male")
+        self.assertEqual(d.id_type, "sa_id")
+        self.assertEqual(d.id_no, "8001015001001")
+        self.assertEqual(d.dob, datetime.date(1980, 1, 1))
