@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.postgres.fields import HStoreField
 from django.contrib.gis.db import models
 
