@@ -3,7 +3,7 @@ python:
   - "2.7"
   - "3.5"
 before_script:
-  - psql template1 -c 'create extension hstore;'
+  - psql template1 -c 'CREATE EXTENSION hstore;CREATE EXTENSION postgis;CREATE EXTENSION postgis_topology;'
 install:
   - "pip install -r requirements.txt --use-wheel"
   - "pip install -r requirements-dev.txt --use-wheel"
