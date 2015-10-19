@@ -50,18 +50,21 @@ class TestEventsApi(AuthenticatedAPITestCase):
                          "Status code on /auth/login was %s (should be 200)."
                          % request.status_code)
 
-    # Trainer Api Testing
-    def test_api_get_trainer(self):
+    # Event Api Testing
+    def test_api_get_event(self):
         # Setup
+        # create a trainer
         trainer_data = {
             "name": "Test Trainer 1 Simple",
             "msisdn": "+27820010001"
         }
         trainer = Trainer.objects.create(**trainer_data)
+        # create a location
         location_data = {
             "point": Point(18.0000000, -33.0000000)
         }
         location = Location.objects.create(**location_data)
+        # create an event
         event_data = {
             "trainer": trainer,
             "location": location,
@@ -75,28 +78,40 @@ class TestEventsApi(AuthenticatedAPITestCase):
             content_type='application/json')
 
         # Check
-        print(response.data)
         self.assertEqual(response.data["scheduled_at"], "2015-11-01T11:00:00Z")
 
-    # def test_api_create_trainer_simple(self):
-    #     # Setup
-    #     post_data = {
-    #         "name": "Test User 1 Simple",
-    #         "msisdn": "+27820010001"
-    #     }
+    def test_api_create_event(self):
+        # Setup
+        # create a trainer
+        trainer_data = {
+            "name": "Test Trainer 1 Simple",
+            "msisdn": "+27820010001"
+        }
+        trainer = Trainer.objects.create(**trainer_data)
+        # create a location
+        location_data = {
+            "point": Point(18.0000000, -33.0000000)
+        }
+        location = Location.objects.create(**location_data)
+        # prepare event data
+        post_data = {
+            "trainer": "/api/v1/trainers/%s/" % trainer.id,
+            "location": "/api/v1/locations/%s/" % location.id,
+            "scheduled_at": "2015-11-01T11:00:00Z"
+        }
+        print(post_data)
+        # Execute
+        response = self.client.post('/api/v1/events/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
 
-    #     # Execute
-    #     response = self.client.post('/api/v1/trainers/',
-    #                                 json.dumps(post_data),
-    #                                 content_type='application/json')
-
-    #     # Check
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     d = Trainer.objects.last()
-    #     self.assertEqual(d.name, "Test User 1 Simple")
-    #     self.assertEqual(d.msisdn, "+27820010001")
-    #     self.assertEqual(d.email, None)
-    #     self.assertEqual(d.extras, None)
+        # Check
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # d = Trainer.objects.last()
+        # self.assertEqual(d.name, "Test User 1 Simple")
+        # self.assertEqual(d.msisdn, "+27820010001")
+        # self.assertEqual(d.email, None)
+        # self.assertEqual(d.extras, None)
 
     # def test_api_create_trainer_detailed(self):
     #     # Setup
