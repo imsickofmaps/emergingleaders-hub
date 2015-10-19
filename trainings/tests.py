@@ -35,22 +35,6 @@ class AuthenticatedAPITestCase(APITestCase):
 
 class TestEventsApi(AuthenticatedAPITestCase):
 
-    def test_login(self):
-        # Setup
-
-        # Execute
-        request = self.client.post(
-            '/api/v1/token-auth/',
-            {"username": "testuser", "password": "testpass"})
-
-        # Check
-        token = request.data.get('token', None)
-        self.assertIsNotNone(
-            token, "Could not receive authentication token on login post.")
-        self.assertEqual(request.status_code, 200,
-                         "Status code on /auth/login was %s (should be 200)."
-                         % request.status_code)
-
     # Event Api Testing
     def test_api_get_event(self):
         # Setup
