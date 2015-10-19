@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django_filters',
     # us
     'operations',
+    'trainings',
 
 )
 
@@ -154,6 +155,7 @@ CELERY_ALWAYS_EAGER = False
 # Tell Celery where to find the tasks
 CELERY_IMPORTS = (
     'operations.tasks',
+    'trainings.tasks',
 )
 
 CELERY_TASK_SERIALIZER = 'json'
