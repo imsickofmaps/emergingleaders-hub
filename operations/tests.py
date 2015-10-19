@@ -142,7 +142,6 @@ class TestOperationsApi(AuthenticatedAPITestCase):
             content_type='application/json')
 
         # Check
-        print(response.data)
         self.assertEqual(response.data["msisdn"], "+27820010001")
 
     def test_api_create_participant_simple(self):
