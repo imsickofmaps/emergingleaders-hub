@@ -1,5 +1,6 @@
 import json
 import datetime
+import pytz
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
@@ -107,33 +108,6 @@ class TestEventsApi(AuthenticatedAPITestCase):
 
         # Check
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # d = Trainer.objects.last()
-        # self.assertEqual(d.name, "Test User 1 Simple")
-        # self.assertEqual(d.msisdn, "+27820010001")
-        # self.assertEqual(d.email, None)
-        # self.assertEqual(d.extras, None)
-
-    # def test_api_create_trainer_detailed(self):
-    #     # Setup
-    #     post_data = {
-    #         "name": "Test User 2 Detailed",
-    #         "msisdn": "+27820020002",
-    #         "email": "user2@operations.com",
-    #         "extras": {
-    #             "id": "1234561111222",
-    #             "coffee": "black"
-    #         }
-    #     }
-
-    #     # Execute
-    #     response = self.client.post('/api/v1/trainers/',
-    #                                 json.dumps(post_data),
-    #                                 content_type='application/json')
-
-    #     # Check
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     d = Trainer.objects.last()
-    #     self.assertEqual(d.name, "Test User 2 Detailed")
-    #     self.assertEqual(d.msisdn, "+27820020002")
-    #     self.assertEqual(d.email, "user2@operations.com")
-    #     self.assertEqual(d.extras, {"id": "1234561111222", "coffee": "black"})
+        d = Event.objects.last()
+        self.assertEqual(d.scheduled_at, datetime.datetime(
+            2015, 11, 1, 11, 0, tzinfo=pytz.utc))
