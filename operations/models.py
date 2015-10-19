@@ -18,6 +18,48 @@ class Trainer(models.Model):
         return "%s" % self.name
 
 
+class Participant(models.Model):
+
+    """
+    People who have participated in training events
+    """
+    LANG_CHOICES = (
+        ('zu', 'isiZulu'),
+        ('xh', 'isiXhosa'),
+        ('af', 'Afrikaans'),
+        ('en', 'English'),
+        ('nso', 'Sesotho sa Leboa'),
+        ('tn', 'Setswana'),
+        ('st', 'Sesotho'),
+        ('ts', 'Xitsonga'),
+        ('ss', 'siSwati'),
+        ('ve', 'Tshivenda'),
+        ('nr', 'isiNdebele'),
+    )
+    GENDER_CHOICES = (
+        ('male', 'Male'),
+        ('female', 'Female'),
+    )
+    ID_TYPE_CHOICES = (
+        ('sa_id', 'SA ID'),
+        ('passport', 'Passport'),
+        ('none', 'None'),
+    )
+    msisdn = models.CharField(max_length=20)
+    lang = models.CharField(max_length=3, null=True, blank=True,
+                            choices=LANG_CHOICES)
+    full_name = models.CharField(max_length=200, null=True, blank=True)
+    gender = models.CharField(max_length=6, null=True, blank=True,
+                              choices=GENDER_CHOICES)
+    id_type = models.CharField(max_length=8, null=True, blank=True,
+                               choices=ID_TYPE_CHOICES)
+    id_no = models.CharField(max_length=100, null=True, blank=True)
+    dob = models.DateField(null=True, blank=True)
+    passport_origin = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class Location(models.Model):
 
     """
