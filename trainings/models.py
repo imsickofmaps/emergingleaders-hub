@@ -1,7 +1,6 @@
 from django.contrib.gis.db import models
 
-from operations.models import Trainer
-from operations.models import Location
+from operations.models import Trainer, Location, Participant
 
 
 class Event(models.Model):
@@ -21,4 +20,23 @@ class Event(models.Model):
 
     def __str__(self):  # __unicode__ on Python 2
         return "Training event by %s on %s" % (
-            self.trainer, self.scheduled_at.strftime("%Y-%m-%d HH:MM:ss"))
+            self.trainer, self.scheduled_at)
+
+
+class Attendee(models.Model):
+
+    """
+    Participants at specific training events
+    """
+    event = models.ForeignKey(Event,
+                              related_name='attendees',
+                              null=False)
+    participant = models.OneToOneField(Participant,
+                                       related_name='participant',
+                                       null=False)
+    survey_sent = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):  # __unicode__ on Python 2
+        return "Attendee %s for event %s" % (self.participant, self.event)
