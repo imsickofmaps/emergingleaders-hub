@@ -61,9 +61,14 @@ class TestEventsApi(AuthenticatedAPITestCase):
         response = self.client.get(
             '/api/v1/events/%s/' % event.id,
             content_type='application/json')
-
         # Check
         self.assertEqual(response.data["scheduled_at"], "2015-11-01T11:00:00Z")
+        self.assertEqual(
+            response.data["trainer"],
+            "http://testserver/api/v1/trainers/%s/" % trainer.id)
+        self.assertEqual(
+            response.data["location"],
+            "http://testserver/api/v1/locations/%s/" % location.id)
 
     def test_api_create_event(self):
         # Setup
@@ -94,6 +99,8 @@ class TestEventsApi(AuthenticatedAPITestCase):
         d = Event.objects.last()
         self.assertEqual(d.scheduled_at, datetime.datetime(
             2015, 11, 1, 11, 0, tzinfo=pytz.utc))
+        self.assertEqual(d.trainer.id, trainer.id)
+        self.assertEqual(d.location.id, location.id)
 
 
 class TestAttendeesApi(AuthenticatedAPITestCase):
@@ -136,6 +143,12 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
             content_type='application/json')
         # Check
         self.assertEqual(response.data["survey_sent"], False)
+        self.assertEqual(
+            response.data["event"],
+            "http://testserver/api/v1/events/%s/" % event.id)
+        self.assertEqual(
+            response.data["participant"],
+            "http://testserver/api/v1/participants/%s/" % participant.id)
 
     def test_api_create_attendee(self):
         # Setup
@@ -175,3 +188,5 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         d = Attendee.objects.last()
         self.assertEqual(d.survey_sent, False)
+        self.assertEqual(d.event.id, event.id)
+        self.assertEqual(d.participant.id, participant.id)
