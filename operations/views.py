@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from .models import Trainer, Participant, Location
-from rest_framework import viewsets, generics, filters
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (UserSerializer, GroupSerializer, TrainerSerializer,
                           ParticipantSerializer, LocationSerializer)
