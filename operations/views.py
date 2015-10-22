@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from .models import Trainer, Participant, Location
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, filters
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (UserSerializer, GroupSerializer, TrainerSerializer,
                           ParticipantSerializer, LocationSerializer)
@@ -54,8 +54,8 @@ class ParticipantSearchList(generics.ListAPIView):
         for the supplied msisdn
         """
         msisdn = self.request.query_params.get("msisdn")
-        data = Participant.objects.filter(msisdn=msisdn)
-        return data
+        participants = Participant.objects.filter(msisdn=msisdn)
+        return participants
 
 
 class LocationViewSet(viewsets.ModelViewSet):
