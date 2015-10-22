@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from .models import Trainer, Participant, Location
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (UserSerializer, GroupSerializer, TrainerSerializer,
                           ParticipantSerializer, LocationSerializer)
@@ -42,6 +42,20 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Participant.objects.all()
     serializer_class = ParticipantSerializer
+
+
+class ParticipantSearchList(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ParticipantSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the participants
+        for the supplied msisdn
+        """
+        msisdn = self.request.query_params.get("msisdn")
+        data = Participant.objects.filter(msisdn=msisdn)
+        return data
 
 
 class LocationViewSet(viewsets.ModelViewSet):

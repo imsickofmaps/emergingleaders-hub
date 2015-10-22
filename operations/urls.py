@@ -12,5 +12,7 @@ router.register(r'locations', views.LocationViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
 urlpatterns = [
+    url('^participants/search/$',
+        views.ParticipantSearchList.as_view()),
     url(r'^', include(router.urls)),
 ]

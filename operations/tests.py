@@ -144,6 +144,25 @@ class TestOperationsApi(AuthenticatedAPITestCase):
         # Check
         self.assertEqual(response.data["msisdn"], "+27820010001")
 
+    def test_api_get_participants_search(self):
+        # Setup
+        participant_data = {
+            "msisdn": "+27820010001"
+        }
+        participant = Participant.objects.create(**participant_data)
+
+        # Execute
+        response = self.client.get(
+            '/api/v1/participants/search/',
+            {"msisdn": "+27820010001"},
+            content_type='application/json')
+
+        # Check
+        import pprint
+        pprint.pprint(response.data[0].id, participant.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
+
     def test_api_create_participant_simple(self):
         # Setup
         post_data = {
