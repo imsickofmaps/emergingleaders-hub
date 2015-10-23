@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
 from operations.models import Trainer, Location, Participant
-from .models import Event, Attendee
+from .models import Event, Attendee, Feedback
 
 
 class APITestCase(TestCase):
@@ -188,5 +188,108 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         d = Attendee.objects.last()
         self.assertEqual(d.survey_sent, False)
+        self.assertEqual(d.event.id, event.id)
+        self.assertEqual(d.participant.id, participant.id)
+
+
+class TestFeedbackApi(AuthenticatedAPITestCase):
+
+    # Feedback Api Testing
+    def test_api_get_feedback(self):
+        # Setup
+        # create a trainer
+        trainer_data = {
+            "name": "Test Trainer",
+            "msisdn": "+27820010001"
+        }
+        trainer = Trainer.objects.create(**trainer_data)
+        # create a location
+        location_data = {
+            "point": Point(18.0000000, -33.0000000)
+        }
+        location = Location.objects.create(**location_data)
+        # create an event
+        event_data = {
+            "trainer": trainer,
+            "location": location,
+            "scheduled_at": "2015-11-01 11:00:00"
+        }
+        event = Event.objects.create(**event_data)
+        # create a participant
+        participant_data = {
+            "msisdn": "+27820010001"
+        }
+        participant = Participant.objects.create(**participant_data)
+        # create a feedback response
+        feedback_data = {
+            "event": event,
+            "participant": participant,
+            "question_id": 1,
+            "question_text": "Rate the venue",
+            "answer_text": "Mediocre",
+            "answer_value": "3"
+        }
+        feedback = Feedback.objects.create(**feedback_data)
+        # Execute
+        response = self.client.get(
+            '/api/v1/feedback/%s/' % feedback.id,
+            content_type='application/json')
+        # Check
+        self.assertEqual(response.data["question_id"], 1)
+        self.assertEqual(response.data["question_text"], "Rate the venue")
+        self.assertEqual(response.data["answer_text"], "Mediocre")
+        self.assertEqual(response.data["answer_value"], "3")
+        self.assertEqual(
+            response.data["event"],
+            "http://testserver/api/v1/events/%s/" % event.id)
+        self.assertEqual(
+            response.data["participant"],
+            "http://testserver/api/v1/participants/%s/" % participant.id)
+
+    def test_api_create_feedback(self):
+        # Setup
+        # create a trainer
+        trainer_data = {
+            "name": "Test Trainer",
+            "msisdn": "+27820010001"
+        }
+        trainer = Trainer.objects.create(**trainer_data)
+        # create a location
+        location_data = {
+            "point": Point(18.0000000, -33.0000000)
+        }
+        location = Location.objects.create(**location_data)
+        # create an event
+        event_data = {
+            "trainer": trainer,
+            "location": location,
+            "scheduled_at": "2015-11-01 11:00:00"
+        }
+        event = Event.objects.create(**event_data)
+        # create a participant
+        participant_data = {
+            "msisdn": "+27820010001"
+        }
+        participant = Participant.objects.create(**participant_data)
+        # prepare feedback data
+        post_data = {
+            "event": "/api/v1/events/%s/" % event.id,
+            "participant": "/api/v1/participants/%s/" % participant.id,
+            "question_id": 1,
+            "question_text": "Rate the venue",
+            "answer_text": "Mediocre",
+            "answer_value": "3"
+        }
+        # Execute
+        response = self.client.post('/api/v1/feedback/',
+                                    json.dumps(post_data),
+                                    content_type='application/json')
+        # Check
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        d = Feedback.objects.last()
+        self.assertEqual(d.question_id, 1)
+        self.assertEqual(d.question_text, "Rate the venue")
+        self.assertEqual(d.answer_text, "Mediocre")
+        self.assertEqual(d.answer_value, "3")
         self.assertEqual(d.event.id, event.id)
         self.assertEqual(d.participant.id, participant.id)
