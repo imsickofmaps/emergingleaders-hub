@@ -153,7 +153,7 @@ class TestOperationsApi(AuthenticatedAPITestCase):
 
         # Execute
         response = self.client.get(
-            '/api/v1/participants/search/',
+            '/api/v1/participants/',
             {"msisdn": "+27820010001"},
             content_type='application/json')
 
@@ -171,7 +171,7 @@ class TestOperationsApi(AuthenticatedAPITestCase):
 
         # Execute
         response = self.client.get(
-            '/api/v1/participants/search/',
+            '/api/v1/participants/',
             {"msisdn": "+27820019999"},
             content_type='application/json')
 

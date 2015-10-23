@@ -42,20 +42,7 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Participant.objects.all()
     serializer_class = ParticipantSerializer
-
-
-class ParticipantSearchList(generics.ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ParticipantSerializer
-
-    def get_queryset(self):
-        """
-        This view should return a list of all the participants
-        for the supplied msisdn
-        """
-        msisdn = self.request.query_params.get("msisdn")
-        participants = Participant.objects.filter(msisdn=msisdn)
-        return participants
+    filter_fields = ('msisdn',)
 
 
 class LocationViewSet(viewsets.ModelViewSet):
