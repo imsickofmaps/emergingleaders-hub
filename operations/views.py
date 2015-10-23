@@ -42,6 +42,7 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Participant.objects.all()
     serializer_class = ParticipantSerializer
+    filter_fields = ('msisdn',)
 
 
 class LocationViewSet(viewsets.ModelViewSet):
