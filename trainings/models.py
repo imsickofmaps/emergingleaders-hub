@@ -31,9 +31,9 @@ class Attendee(models.Model):
     event = models.ForeignKey(Event,
                               related_name='attendees',
                               null=False)
-    participant = models.OneToOneField(Participant,
-                                       related_name='attendees',
-                                       null=False)
+    participant = models.ForeignKey(Participant,
+                                    related_name='attendees',
+                                    null=False)
     survey_sent = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -50,9 +50,9 @@ class Feedback(models.Model):
     event = models.ForeignKey(Event,
                               related_name='feedback',
                               null=False)
-    participant = models.OneToOneField(Participant,
-                                       related_name='feedback',
-                                       null=False)
+    participant = models.ForeignKey(Participant,
+                                    related_name='feedback',
+                                    null=False)
     question_id = models.IntegerField()
     question_text = models.CharField(max_length=255)
     answer_text = models.CharField(max_length=255)
