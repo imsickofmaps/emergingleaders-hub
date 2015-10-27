@@ -75,9 +75,11 @@ WSGI_APPLICATION = 'emergingleaders_hub.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get(
-            'ELHUB_DATABASE',
+            'DATABASE_URL',
             'postgis://postgres:@localhost/emergingleaders_hub')),
 }
+
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
