@@ -82,4 +82,4 @@ class Location(models.Model):
     objects = models.GeoManager()
 
     def __str__(self):
-        return "%s" % (self.point)
+        return "%s" % (self.venue_name)
