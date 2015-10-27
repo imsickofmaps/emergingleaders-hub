@@ -79,6 +79,8 @@ DATABASES = {
             'postgis://postgres:@localhost/emergingleaders_hub')),
 }
 
+GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
