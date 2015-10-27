@@ -6,7 +6,7 @@ raven
 django-grappelli
 gunicorn
 django-filter
-dj-static
 celery
 django-celery
 redis
+whitenoise
