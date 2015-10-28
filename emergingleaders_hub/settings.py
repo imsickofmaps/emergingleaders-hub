@@ -180,7 +180,7 @@ djcelery.setup_loader()
 
 VUMI_API_URL = \
     os.environ.get('EMERGINGLEADERS_HUB_VUMI_API_URL',
-                   'http://example.com/api/v1/go/http_api_nostream')
+                   'https://go.vumi.org/api/v1/go/http_api_nostream')
 VUMI_ACCOUNT_KEY = \
     os.environ.get('EMERGINGLEADERS_HUB_VUMI_ACCOUNT_KEY', 'acc-key')
 VUMI_CONVERSATION_KEY = \

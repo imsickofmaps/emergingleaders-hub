@@ -190,7 +190,7 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
         }
         # add response
         responses.add(responses.PUT,
-                      "http://example.com/api/v1/go/http_api_nostream/conv-key/messages.json",  # flake8: noqa
+                      "https://go.vumi.org/api/v1/go/http_api_nostream/conv-key/messages.json",  # flake8: noqa
                       body=json.dumps(post_data), status=201,
                       content_type='application/json')
         # Execute
