@@ -157,7 +157,10 @@ CELERY_CREATE_MISSING_QUEUES = True
 CELERY_ROUTES = {
     'celery.backend_cleanup': {
         'queue': 'mediumpriority',
-    }
+    },
+    'trainings.tasks.send_message': {
+        'queue': 'mediumpriority',
+    },
 }
 
 CELERY_ALWAYS_EAGER = False
