@@ -1,6 +1,10 @@
 from django.contrib.gis.db import models
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from operations.models import Trainer, Location, Participant
+from trainings.tasks import send_message
 
 
 class Event(models.Model):
@@ -40,6 +44,21 @@ class Attendee(models.Model):
 
     def __str__(self):  # __unicode__ on Python 2
         return "Attendee %s for event %s" % (self.participant, self.event)
+
+
+@receiver(post_save, sender=Attendee)
+def send_feedback_sms(sender, instance, created, **kwargs):
+
+    """
+    Send an Sms to the Attendee prompting them to provide feedback.
+    """
+    if created:
+        # Send message
+        delay = 3600 * settings.FEEDBACK_MESSAGE_DELAY
+        send_message.apply_async(
+            countdown=delay,
+            kwargs={"to_addr": instance.participant.msisdn,
+                    "message": settings.FEEDBACK_MESSAGE})
 
 
 class Feedback(models.Model):
