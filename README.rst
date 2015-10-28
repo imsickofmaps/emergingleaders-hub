@@ -49,3 +49,6 @@ slack notifications
 ::
     sudo dokku plugin:install https://github.com/ribot/dokku-slack.git
     dokku slack:set emergingleaders-hub slackwebhook
+
+
+The DOKKU_SCALE contains the trigger for how many processes to run for each aspect of the system. This app currently has one web and one worker.

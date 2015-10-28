@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django.contrib.postgres',
     # 3rd party
+    'djcelery',
     'raven.contrib.django.raven_compat',
     'rest_framework',
     'rest_framework.authtoken',
