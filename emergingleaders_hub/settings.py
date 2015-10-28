@@ -194,7 +194,7 @@ FEEDBACK_USSD_NUMBER = \
     os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_USSD_NUMBER',
                    "*120*8864*xxxx")
 FEEDBACK_MESSAGE_DELAY = \
-    os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE_DELAY', 24)  # hours
+    os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE_DELAY', 1440)  # min
 FEEDBACK_MESSAGE = \
     os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE',
                    "Please help us improve Emerging Leaders Training \

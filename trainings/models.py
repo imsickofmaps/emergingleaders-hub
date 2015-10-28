@@ -54,7 +54,7 @@ def send_feedback_sms(sender, instance, created, **kwargs):
     """
     if created:
         # Send message
-        delay = 3600 * settings.FEEDBACK_MESSAGE_DELAY
+        delay = 60 * settings.FEEDBACK_MESSAGE_DELAY
         send_message.apply_async(
             countdown=delay,
             kwargs={"to_addr": instance.participant.msisdn,
