@@ -28,6 +28,8 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
 
+GRAPPELLI_ADMIN_TITLE = "EMERGING LEADERS HUB"
+
 
 # Application definition
 

@@ -31,7 +31,7 @@ on server
     dokku config:set emergingleaders-hub DATABASE_URL=postgis://postgres:pass@dokku-postgres-emergingleaders-hub-db:5432/emergingleaders_hub_db
     dokku postgres:connect emergingleaders-hub-db
     CREATE EXTENSION hstore;CREATE EXTENSION postgis;CREATE EXTENSION postgis_topology;
-    
+
     # deploy app locally
     dokku run emergingleaders-hub python manage.py migrate
     dokku run emergingleaders-hub python manage.py createsuperuser
@@ -42,3 +42,10 @@ local
 ::
     git remote add production dokku@host.com:emergingleaders-hub
     git push production master
+
+
+slack notifications
+
+::
+    sudo dokku plugin:install https://github.com/ribot/dokku-slack.git
+    dokku slack:set emergingleaders-hub slackwebhook
