@@ -1,16 +1,18 @@
 import json
 import datetime
 import pytz
+import responses
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.test import TestCase
+from django.db.models.signals import post_save
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
 from operations.models import Trainer, Location, Participant
-from .models import Event, Attendee, Feedback
+from .models import Event, Attendee, Feedback, send_feedback_sms
 
 
 class APITestCase(TestCase):
@@ -21,8 +23,26 @@ class APITestCase(TestCase):
 
 class AuthenticatedAPITestCase(APITestCase):
 
+    def _replace_post_save_hooks(self):
+        has_listeners = lambda: post_save.has_listeners(Attendee)
+        assert has_listeners(), (
+            "Attendee model has no post_save listeners. Make sure"
+            " helpers cleaned up properly in earlier tests.")
+        post_save.disconnect(send_feedback_sms, sender=Attendee)
+        assert not has_listeners(), (
+            "Attendee model still has post_save listeners. Make sure"
+            " helpers cleaned up properly in earlier tests.")
+
+    def _restore_post_save_hooks(self):
+        has_listeners = lambda: post_save.has_listeners(Attendee)
+        assert not has_listeners(), (
+            "Attendee model still has post_save listeners. Make sure"
+            " helpers removed them properly in earlier tests.")
+        post_save.connect(send_feedback_sms, sender=Attendee)
+
     def setUp(self):
         super(AuthenticatedAPITestCase, self).setUp()
+        self._replace_post_save_hooks()
         self.username = 'testuser'
         self.password = 'testpass'
         self.user = User.objects.create_user(self.username,
@@ -31,6 +51,9 @@ class AuthenticatedAPITestCase(APITestCase):
         token = Token.objects.create(user=self.user)
         self.token = token.key
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+    def tearDown(self):
+        self._restore_post_save_hooks()
 
     DEFAULT_TRAINER = {
         "name": "Test Trainer",
@@ -153,8 +176,11 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
             "http://testserver/api/v1/participants/%s/" % (
                 attendee.participant.id))
 
+    @responses.activate
     def test_api_create_attendee(self):
         # Setup
+        # restore post_save hook for this test
+        post_save.connect(send_feedback_sms, sender=Attendee)
         event = self.create_event()
         participant = self.create_participant()
         # prepare event data
@@ -162,6 +188,11 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
             "event": "/api/v1/events/%s/" % event.id,
             "participant": "/api/v1/participants/%s/" % participant.id
         }
+        # add response
+        responses.add(responses.PUT,
+                      "https://go.vumi.org/api/v1/go/http_api_nostream/conv-key/messages.json",  # flake8: noqa
+                      body=json.dumps(post_data), status=201,
+                      content_type='application/json')
         # Execute
         response = self.client.post('/api/v1/attendees/',
                                     json.dumps(post_data),
@@ -172,6 +203,9 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
         self.assertEqual(d.survey_sent, False)
         self.assertEqual(d.event.id, event.id)
         self.assertEqual(d.participant.id, participant.id)
+        self.assertEqual(len(responses.calls), 1)
+        # disconnect post_save hook again
+        post_save.disconnect(send_feedback_sms, sender=Attendee)
 
 
 class TestFeedbackApi(AuthenticatedAPITestCase):

@@ -145,7 +145,7 @@ REST_FRAMEWORK = {
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-BROKER_URL = os.environ.get('ELHUB_REDIS', 'redis://localhost:6379/0')
+BROKER_URL = os.environ.get('BROKER_URL', 'redis://localhost:6379/0')
 
 from kombu import Exchange, Queue
 
@@ -159,7 +159,10 @@ CELERY_CREATE_MISSING_QUEUES = True
 CELERY_ROUTES = {
     'celery.backend_cleanup': {
         'queue': 'mediumpriority',
-    }
+    },
+    'trainings.tasks.send_message': {
+        'queue': 'mediumpriority',
+    },
 }
 
 CELERY_ALWAYS_EAGER = False
@@ -176,6 +179,27 @@ CELERY_ACCEPT_CONTENT = ['json']
 
 import djcelery
 djcelery.setup_loader()
+
+VUMI_API_URL = \
+    os.environ.get('EMERGINGLEADERS_HUB_VUMI_API_URL',
+                   'https://go.vumi.org/api/v1/go/http_api_nostream')
+VUMI_ACCOUNT_KEY = \
+    os.environ.get('EMERGINGLEADERS_HUB_VUMI_ACCOUNT_KEY', 'acc-key')
+VUMI_CONVERSATION_KEY = \
+    os.environ.get('EMERGINGLEADERS_HUB_VUMI_CONVERSATION_KEY', 'conv-key')
+VUMI_ACCOUNT_TOKEN = \
+    os.environ.get('EMERGINGLEADERS_HUB_VUMI_ACCOUNT_TOKEN', 'conv-token')
+
+FEEDBACK_USSD_NUMBER = \
+    os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_USSD_NUMBER',
+                   "*120*8864*xxxx")
+FEEDBACK_MESSAGE_DELAY = \
+    os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE_DELAY', 1440)  # min
+FEEDBACK_MESSAGE = \
+    os.environ.get('EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE',
+                   "Please help us improve Emerging Leaders Training \
+                   by providing feedback on the training you received. \
+                   Dial %s to provide your feedback!" % FEEDBACK_USSD_NUMBER)
 
 try:
     from emergingleaders_hub.local_settings import *  # flake8: noqa
