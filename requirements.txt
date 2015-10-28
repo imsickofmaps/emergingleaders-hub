@@ -10,3 +10,4 @@ celery
 django-celery
 redis
 whitenoise
+go_http
