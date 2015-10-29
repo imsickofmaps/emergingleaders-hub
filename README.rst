@@ -44,7 +44,6 @@ on server
     # set up rabbitmq for workers
     dokku rabbitmq:create emergingleaders-hub-rabbitmq
     dokku rabbitmq:link emergingleaders-hub-rabbitmq emergingleaders-hub
-    dokku config:set emergingleaders-hub BROKER_URL=amqp://emergingleaders-hub-rabbitmq:@dokku-rabbitmq-emergingleaders-hub-rabbitmq:5672/emergingleaders-hub-rabbitmq
     dokku config:set emergingleaders-hub EMERGINGLEADERS_HUB_VUMI_ACCOUNT_KEY=  EMERGINGLEADERS_HUB_VUMI_CONVERSATION_KEY= EMERGINGLEADERS_HUB_VUMI_ACCOUNT_TOKEN= EMERGINGLEADERS_HUB_FEEDBACK_USSD_NUMBER="*120*8864*xxxx#" EMERGINGLEADERS_HUB_FEEDBACK_MESSAGE_DELAY=120
 
     # deploy app with git push locally then
