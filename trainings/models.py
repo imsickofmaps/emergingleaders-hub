@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from operations.models import Trainer, Location, Participant
-from trainings.tasks import send_message
 
 
 class Event(models.Model):
@@ -55,10 +54,13 @@ def send_feedback_sms(sender, instance, created, **kwargs):
     if created:
         # Send message
         delay = 60 * int(settings.FEEDBACK_MESSAGE_DELAY)
+
+        from trainings.tasks import send_message
         send_message.apply_async(
             countdown=delay,
             kwargs={"to_addr": instance.participant.msisdn,
-                    "message": settings.FEEDBACK_MESSAGE})
+                    "message": settings.FEEDBACK_MESSAGE,
+                    "attendee_id": instance.id})
 
 
 class Feedback(models.Model):
