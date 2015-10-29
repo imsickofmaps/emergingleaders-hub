@@ -5,6 +5,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from requests.exceptions import HTTPError
 from go_http.send import HttpApiSender
 
+from trainings.models import Attendee
 
 logger = get_task_logger(__name__)
 
@@ -31,7 +32,7 @@ class Send_Message(Task):
             conversation_token=settings.VUMI_ACCOUNT_TOKEN
         )
 
-    def run(self, to_addr, message, **kwargs):
+    def run(self, to_addr, message, attendee_id, **kwargs):
         """
         Sends a message via Vumi go_http
         """
@@ -44,6 +45,10 @@ class Send_Message(Task):
                 vumiresponse = sender.send_text(to_addr, message,
                                                 session_event="new")
                 l.info("Sent text message to <%s>" % to_addr)
+                attendee = Attendee.objects.get(id=attendee_id)
+                attendee.survey_sent = True
+                attendee.save()
+                l.info("Attendee survey_sent marked as True")
             except HTTPError as e:
                 # retry message sending if in 500 range (3 default retries)
                 if 500 < e.response.status_code < 599:

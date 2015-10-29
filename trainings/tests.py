@@ -200,7 +200,7 @@ class TestAttendeesApi(AuthenticatedAPITestCase):
         # Check
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         d = Attendee.objects.last()
-        self.assertEqual(d.survey_sent, False)
+        self.assertEqual(d.survey_sent, True)
         self.assertEqual(d.event.id, event.id)
         self.assertEqual(d.participant.id, participant.id)
         self.assertEqual(len(responses.calls), 1)
