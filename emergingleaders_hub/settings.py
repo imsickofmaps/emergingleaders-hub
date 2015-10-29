@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'django_tablib',
     # us
     'operations',
     'trainings',
