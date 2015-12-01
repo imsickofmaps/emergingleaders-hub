@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django_tablib.admin import TablibAdmin
+from leaflet.admin import LeafletGeoAdmin
 from .models import Trainer, Participant, Location
 
 
@@ -23,14 +24,14 @@ class ParticipantAdmin(TablibAdmin):
     formats = ['xls', 'csv']
 
 
-class LocationAdmin(TablibAdmin):
-    list_display = ('venue_name', 'point', 'address', 'extras', 'created_at',
-                    'updated_at')
-    list_filter = ['venue_name', 'point', 'address', 'extras', 'created_at',
-                   'updated_at']
-    search_fields = ['venue_name', 'address']
-    formats = ['xls', 'csv']
+# class LocationAdmin(TablibAdmin):
+#     list_display = ('venue_name', 'point', 'address', 'extras', 'created_at',
+#                     'updated_at')
+#     list_filter = ['venue_name', 'point', 'address', 'extras', 'created_at',
+#                    'updated_at']
+#     search_fields = ['venue_name', 'address']
+#     formats = ['xls', 'csv']
 
 admin.site.register(Trainer, TrainerAdmin)
 admin.site.register(Participant, ParticipantAdmin)
-admin.site.register(Location, LocationAdmin)
+admin.site.register(Location, LeafletGeoAdmin)
