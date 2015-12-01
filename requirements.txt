@@ -12,3 +12,4 @@ redis==2.10.3
 whitenoise==2.0.4
 go_http==0.2.6
 git+https://github.com/cyberstar/django-tablib.git
+django-leaflet==0.17.0

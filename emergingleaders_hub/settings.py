@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'django_filters',
     'django_tablib',
+    'leaflet',
     # us
     'operations',
     'trainings',
@@ -181,6 +182,13 @@ CELERY_ACCEPT_CONTENT = ['json']
 
 import djcelery
 djcelery.setup_loader()
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (-33.93, 18.42),
+    'DEFAULT_ZOOM': 12,
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 18
+}
 
 VUMI_API_URL = \
     os.environ.get('EMERGINGLEADERS_HUB_VUMI_API_URL',
